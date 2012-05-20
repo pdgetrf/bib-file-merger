@@ -6,8 +6,8 @@
 sub RemoveDuplicates;
 sub AssembleDict;
 use Data::Dumper;
+use Term::ANSIColor;
 our $anoycount=0;
- 
 
 #---- global setting ----#
 open(OLDERR, ">&STDERR");
@@ -31,6 +31,8 @@ open FH, $ARGV[1];
 @input2 = <FH>;
 close FH;
 
+open FHO, $ARGV[2];
+
 #---- remove duplicates if asked ----#
 
 
@@ -40,17 +42,79 @@ close FH;
 AssembleDict(\@input1, \%dict1);
 AssembleDict(\@input2, \%dict2);
 
+
+#---- try to add items in dict2 into dict1 ----#
+print "\n";
+while ( ($k, $v) = each %dict2) 
+{
+#	print "$k => \n$v\n";
+
+	if (exists $dict1{$k})
+	{
+		print color 'bold yellow';
+		print "1: In host file ".$ARGV[0].":"; 
+		print $dict1{$k};
+		print color 'reset';
+		print ">----------------------------------<\n\n";
+		print color 'bold green';
+		print "2: In file ".$ARGV[1].":"; 
+		print $v;
+		print color 'reset';
+		print "collision detected!! select one to keep[1/2]: ";
+	
+		$userinput =  <STDIN>;
+		while ($userinput != 1 && $userinput != 2)
+		{
+			print "either 1 or 2, trying again: ";
+			$userinput =  <STDIN>;
+		}
+
+		if ($userinput==2)
+		{
+			delete $dict1{$k};
+			$dict1{$k} = $v;
+			print "\npayload in";
+			print color 'bold red';
+			print " 2 ";
+			print color 'reset';
+			print "is loaded\n\n";
+		}
+		else
+		{
+			print "\npayload in";
+			print color 'bold red';
+			print " 1 ";
+			print color 'reset';
+			print "is loaded\n\n";
+		}
+	}
+	else
+	{
+		$dict1{$k} = $v;
+	}
+}
+
+
 while ( ($k, $v) = each %dict1) 
 {
 	print "$k => \n$v\n";
 }
 
-print "----------------------------------\n";
 
-while ( ($k, $v) = each %dict2) 
-{
-	print "$k => \n$v\n";
-}
+
+
+
+open FHO, $ARGV[2];
+
+
+
+
+
+
+
+
+
+
 
 #---- subroutines ----#
 sub RemoveDuplicates
