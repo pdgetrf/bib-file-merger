@@ -44,41 +44,52 @@ while ( ($k, $v) = each %dict2)
 
 	if (exists $dict1{$k})
 	{
-		print color 'bold yellow';
-		print "1: In host file ".$ARGV[0].":"; 
-		print $dict1{$k};
-		print color 'reset';
-		print ">----------------------------------<\n\n";
-		print color 'bold green';
-		print "2: In file ".$ARGV[1].":"; 
-		print $v;
-		print color 'reset';
-		print "collision detected!! select one to keep[1/2]: ";
-	
-		$userinput =  <STDIN>;
-		while ($userinput != 1 && $userinput != 2)
+		if ($v ne $dict1{$k})
 		{
-			print "either 1 or 2, trying again: ";
-			$userinput =  <STDIN>;
-		}
-
-		if ($userinput==2)
-		{
-			delete $dict1{$k};
-			$dict1{$k} = $v;
-			print "\npayload in";
-			print color 'bold red';
-			print " 2 ";
+			print color 'bold yellow';
+			print "1: In host file ".$ARGV[0].":\n"; 
+			print $dict1{$k};
 			print color 'reset';
-			print "is loaded\n\n";
+			print "\n>----------------------------------<\n\n";
+			print color 'bold green';
+			print "2: In file ".$ARGV[1].":\n"; 
+			print $v;
+			print color 'reset';
+			print "collision detected!! select one to keep[1/2]: ";
+
+			$userinput =  <STDIN>;
+			while ($userinput != 1 && $userinput != 2)
+			{
+				print "either 1 or 2, trying again: ";
+				$userinput =  <STDIN>;
+			}
+
+			if ($userinput==2)
+			{
+				delete $dict1{$k};
+				$dict1{$k} = $v;
+				print "\npayload in";
+				print color 'bold red';
+				print " 2 ";
+				print color 'reset';
+				print "is loaded\n\n";
+			}
+			else
+			{
+				print "\npayload in";
+				print color 'bold red';
+				print " 1 ";
+				print color 'reset';
+				print "is loaded\n\n";
+			}
 		}
 		else
 		{
-			print "\npayload in";
+			print "item in file $ARGV[0] and $ARGV[1] with title";
 			print color 'bold red';
-			print " 1 ";
+			print " '$k' ";
 			print color 'reset';
-			print "is loaded\n\n";
+			print "is auto-merged\n\n";
 		}
 	}
 	else
@@ -87,20 +98,13 @@ while ( ($k, $v) = each %dict2)
 	}
 }
 
-
-#while ( ($k, $v) = each %dict1) 
-#{
-#	print "$k => \n$v\n";
-#}
-
-
 #---- output result ----#
 open FH, ">$ARGV[2]" or die $!;
 
 $outp = "";
 foreach $k (sort (keys %dict1)) 
 {
-	$outp = $outp.$dict1{$k};
+	$outp = $outp.$dict1{$k}."\n";
 }
 
 print FH $outp;
@@ -118,8 +122,8 @@ sub AssembleDict
 	$dict = $_[1];
 	$filename = $_[2];
 
-	$filelines =~ s/\r//g;
-
+	$filelines =~ s/\r//g;	# remove ^M
+	$filelines =~ s/\n+/\n/g;	#remove excessive blank line
 
 	my @items = split(/@/, $filelines);
 
@@ -134,7 +138,7 @@ sub AssembleDict
 	$i=0;
 	foreach $item (@items)
 	{
-		if ($item =~ /title\s*?=\s*?{{1,2}(.+?)}{1,2}/)
+		if ($item =~ /title\s*?=\s*?{{1,2}(.+?)}{1,2},/)
 		{
 			$title = lc $1;
 		}
@@ -144,44 +148,55 @@ sub AssembleDict
 			$anoycount++;
 		}
 
-		if (exists $dict->{$title})
+		if (exists $dict->{$title} )
 		{
-			print "In file $filename\n\n"; 
-			print color 'bold yellow';
-			print "version 1: \n\n"; 
-			print $dict->{$title};
-			print color 'reset';
-			print ">----------------------------------<\n\n";
-			print color 'bold green';
-			print "version 2: \n\n"; 
-			print $item;
-			print color 'reset';
-			print "collision detected!! select one to keep[1/2]: ";
-
-			$userinput =  <STDIN>;
-			while ($userinput != 1 && $userinput != 2)
+			if ($item ne $dict->{$title})
 			{
-				print "either 1 or 2, trying again: ";
-				$userinput =  <STDIN>;
-			}
-
-			if ($userinput==2)
-			{
-				delete $dict->{$title};
-				$dict->{$title} = $item;
-				print "\npayload in";
-				print color 'bold red';
-				print " 2 ";
+				print "In file $filename\n\n"; 
+				print color 'bold yellow';
+				print "version 1: \n\n"; 
+				print $dict->{$title};
 				print color 'reset';
-				print "is loaded\n\n";
+				print "\n>----------------------------------<\n\n";
+				print color 'bold green';
+				print "version 2: \n\n"; 
+				print $item;
+				print color 'reset';
+				print "collision detected!! select one to keep[1/2]: ";
+
+				$userinput =  <STDIN>;
+				while ($userinput != 1 && $userinput != 2)
+				{
+					print "either 1 or 2, trying again: ";
+					$userinput =  <STDIN>;
+				}
+
+				if ($userinput==2)
+				{
+					delete $dict->{$title};
+					$dict->{$title} = $item;
+					print "\npayload in";
+					print color 'bold red';
+					print " 2 ";
+					print color 'reset';
+					print "is loaded\n\n";
+				}
+				else
+				{
+					print "\npayload in";
+					print color 'bold red';
+					print " 1 ";
+					print color 'reset';
+					print "is loaded\n\n";
+				}
 			}
 			else
 			{
-				print "\npayload in";
+				print "item in file $filename with title";
 				print color 'bold red';
-				print " 1 ";
+				print " '$title' ";
 				print color 'reset';
-				print "is loaded\n\n";
+				print "is auto-merged\n\n";
 			}
 		}
 		else
