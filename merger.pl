@@ -55,7 +55,7 @@ while ( ($k, $v) = each %dict2)
 			print "2: In file ".$ARGV[1].":\n"; 
 			print $v;
 			print color 'reset';
-			print "collision detected!! select one to keep[1/2]: ";
+			print "\ncollision detected!! select one to keep[1/2]: ";
 
 			$userinput =  <STDIN>;
 			while ($userinput != 1 && $userinput != 2)
@@ -162,7 +162,7 @@ sub AssembleDict
 				print "version 2: \n\n"; 
 				print $item;
 				print color 'reset';
-				print "collision detected!! select one to keep[1/2]: ";
+				print "\ncollision detected!! select one to keep[1/2]: ";
 
 				$userinput =  <STDIN>;
 				while ($userinput != 1 && $userinput != 2)
