@@ -3,7 +3,6 @@
 # merger.pl input1.bib input2.bib output.bib 
 
 #---- forward declaration ----#
-sub RemoveDuplicates;
 sub AssembleDict;
 use Data::Dumper;
 use Term::ANSIColor;
@@ -110,12 +109,6 @@ close FH;
 
 print "Result has been written to $ARGV[2]\n";
 
-
-#---- subroutines ----#
-sub RemoveDuplicates
-{
-# NOT IMPLEMENTED YET
-}
 
 sub AssembleDict
 {
