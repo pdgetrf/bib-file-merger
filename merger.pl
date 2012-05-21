@@ -19,7 +19,7 @@ $| = 1;   # enforce flushing
 if (scalar @ARGV < 3)
 {
 	print "ERROR: insufficient arguments\n"; 
-	print "USAGE: merger.pl input1.bib input2.bib output.bib -dupcheck 0/1\n";
+	print "USAGE: merger.pl input1.bib input2.bib output.bib\n";
 	exit;
 }
 
