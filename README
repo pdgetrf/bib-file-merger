@@ -1,0 +1,16 @@
+Purpose: Merge multiple Latex bibliography files into one
+License: GNU GPL v3
+Author: Peng Du
+
+USAGE: merger.pl input1.bib input2.bib output.bib
+
+NOTES: 
+(1) duplicates(same reference name, case insensitive) in input1.bib and input2.bib are dealt with first
+(2) items in file input2.bib is merged into file input1.bib
+(3) duplicated items with the exact same content are automatically dropped  
+
+KNOWN PROBLEM:
+duplicates of items without 'title=' needs to be removed manually, such as
+
+@STRING{ACMTOMS = "{ACM} Transactions on Mathematical Software"}
+
